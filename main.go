@@ -5,13 +5,15 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 )
 
 func main() {
-	var input string
-	fmt.Scan(&input)
+	var inputFile, inputWord string
+	fmt.Scan(&inputFile)
+	fmt.Scan(&inputWord)
 
-	file, err := os.Open(input)
+	file, err := os.Open(inputFile)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -19,7 +21,12 @@ func main() {
 
 	scanner := bufio.NewScanner(file)
 
+	taboo_words := make(map[string]struct{})
 	for scanner.Scan() {
-		fmt.Println(scanner.Text())
+		taboo_words[scanner.Text()] = struct{}{}
 	}
+
+	lower := strings.ToLower(inputWord)
+	_, ok := taboo_words[lower]
+	fmt.Println(ok)
 }
