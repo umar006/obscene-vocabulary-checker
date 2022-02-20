@@ -1,19 +1,25 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
-	"io/ioutil"
 	"log"
+	"os"
 )
 
 func main() {
 	var input string
 	fmt.Scan(&input)
 
-	file, err := ioutil.ReadFile(input)
+	file, err := os.Open(input)
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer file.Close()
 
-	fmt.Println(string(file))
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		fmt.Println(scanner.Text())
+	}
 }
