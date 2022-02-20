@@ -11,7 +11,6 @@ import (
 func main() {
 	var inputFile, inputWord string
 	fmt.Scan(&inputFile)
-	fmt.Scan(&inputWord)
 
 	file, err := os.Open(inputFile)
 	if err != nil {
@@ -26,7 +25,20 @@ func main() {
 		taboo_words[scanner.Text()] = struct{}{}
 	}
 
-	lower := strings.ToLower(inputWord)
-	_, ok := taboo_words[lower]
-	fmt.Println(ok)
+	for {
+		fmt.Scan(&inputWord)
+
+		if inputWord == "exit" {
+			fmt.Println("Bye!")
+			break
+		}
+
+		lower := strings.ToLower(inputWord)
+		if _, ok := taboo_words[lower]; ok {
+			replacer := strings.NewReplacer(lower, strings.Repeat("*", len(lower)))
+			fmt.Println(replacer.Replace(lower))
+		} else {
+			fmt.Println(inputWord)
+		}
+	}
 }
