@@ -14,12 +14,13 @@ func openFile(fileName string) *os.File {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer file.Close()
 
 	return file
 }
 
 func readFileToMap(file *os.File) map[string]struct{} {
+	defer file.Close()
+
 	scanner := bufio.NewScanner(file)
 
 	mapped := make(map[string]struct{})
@@ -30,20 +31,23 @@ func readFileToMap(file *os.File) map[string]struct{} {
 	return mapped
 }
 
+func userInput() string {
+	reader := bufio.NewReader(os.Stdin)
+	input, err := reader.ReadString('\n')
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return strings.TrimSpace(input)
+}
+
 func main() {
-	var inputFile string
-	fmt.Scan(&inputFile)
-
+	inputFile := userInput()
 	openFile := openFile(inputFile)
-
 	taboo_words := readFileToMap(openFile)
 
 	for {
-		inputSentence := bufio.NewReader(os.Stdin)
-		sentence, err := inputSentence.ReadString('\n')
-		if err != nil {
-			log.Fatal(err)
-		}
+		sentence := userInput()
 
 		if sentence == "exit\n" {
 			fmt.Println("Bye!")
@@ -55,6 +59,7 @@ func main() {
 			censor := strings.Repeat("*", len(k))
 			sentence = regex.ReplaceAllString(sentence, censor)
 		}
+
 		fmt.Println(sentence)
 	}
 }
