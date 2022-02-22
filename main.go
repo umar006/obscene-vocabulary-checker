@@ -9,17 +9,22 @@ import (
 	"strings"
 )
 
-func main() {
-	var inputFile string
-	fmt.Scan(&inputFile)
-
-	file, err := os.Open(inputFile)
+func openFile(fileName string) *os.File {
+	file, err := os.Open(fileName)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
+	return file
+}
+
+func main() {
+	var inputFile string
+	fmt.Scan(&inputFile)
+
+	openFile := openFile(inputFile)
+	scanner := bufio.NewScanner(openFile)
 
 	taboo_words := make(map[string]struct{})
 	for scanner.Scan() {
