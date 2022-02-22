@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 	"strings"
 )
 
 func main() {
-	var inputFile, inputWord string
+	var inputFile string
 	fmt.Scan(&inputFile)
 
 	file, err := os.Open(inputFile)
@@ -26,19 +27,22 @@ func main() {
 	}
 
 	for {
-		fmt.Scan(&inputWord)
+		inputSentence := bufio.NewReader(os.Stdin)
+		sentence, err := inputSentence.ReadString('\n')
+		if err != nil {
+			log.Fatal(err)
+		}
 
-		if inputWord == "exit" {
+		if sentence == "exit\n" {
 			fmt.Println("Bye!")
 			break
 		}
 
-		lower := strings.ToLower(inputWord)
-		if _, ok := taboo_words[lower]; ok {
-			replacer := strings.NewReplacer(lower, strings.Repeat("*", len(lower)))
-			fmt.Println(replacer.Replace(lower))
-		} else {
-			fmt.Println(inputWord)
+		for k := range taboo_words {
+			regex := regexp.MustCompile("(?i)" + k)
+			censor := strings.Repeat("*", len(k))
+			sentence = regex.ReplaceAllString(sentence, censor)
 		}
+		fmt.Println(sentence)
 	}
 }
