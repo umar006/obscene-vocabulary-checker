@@ -41,6 +41,16 @@ func userInput() string {
 	return strings.TrimSpace(input)
 }
 
+func censorTabooWord(sentence string, taboo_words map[string]struct{}) {
+	for k := range taboo_words {
+		regex := regexp.MustCompile("(?i)" + k)
+		censor := strings.Repeat("*", len(k))
+		sentence = regex.ReplaceAllString(sentence, censor)
+	}
+
+	fmt.Println(sentence)
+}
+
 func main() {
 	inputFile := userInput()
 	openFile := openFile(inputFile)
@@ -54,12 +64,6 @@ func main() {
 			break
 		}
 
-		for k := range taboo_words {
-			regex := regexp.MustCompile("(?i)" + k)
-			censor := strings.Repeat("*", len(k))
-			sentence = regex.ReplaceAllString(sentence, censor)
-		}
-
-		fmt.Println(sentence)
+		censorTabooWord(sentence, taboo_words)
 	}
 }
