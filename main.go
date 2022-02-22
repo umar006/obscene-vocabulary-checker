@@ -19,17 +19,24 @@ func openFile(fileName string) *os.File {
 	return file
 }
 
+func readFileToMap(file *os.File) map[string]struct{} {
+	scanner := bufio.NewScanner(file)
+
+	mapped := make(map[string]struct{})
+	for scanner.Scan() {
+		mapped[scanner.Text()] = struct{}{}
+	}
+
+	return mapped
+}
+
 func main() {
 	var inputFile string
 	fmt.Scan(&inputFile)
 
 	openFile := openFile(inputFile)
-	scanner := bufio.NewScanner(openFile)
 
-	taboo_words := make(map[string]struct{})
-	for scanner.Scan() {
-		taboo_words[scanner.Text()] = struct{}{}
-	}
+	taboo_words := readFileToMap(openFile)
 
 	for {
 		inputSentence := bufio.NewReader(os.Stdin)
